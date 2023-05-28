@@ -20,7 +20,25 @@ type CachedRegions struct {
 	Regions   []types.Region `json:"regions"`
 }
 
-func readRegionsFromCache() ([]types.Region, error) {
+type TimestampProvider interface {
+	Now() time.Time
+}
+
+type DefaultTimestampProvider struct{}
+
+func (p DefaultTimestampProvider) Now() time.Time {
+	return time.Now()
+}
+
+type MockTimestampProvider struct {
+	MockTime time.Time
+}
+
+func (p MockTimestampProvider) Now() time.Time {
+	return p.MockTime
+}
+
+func readRegionsFromCache(timestampProvider TimestampProvider) ([]types.Region, error) {
 	cacheFile, err := os.Open(cacheFilePath)
 	if err != nil {
 		return nil, err
@@ -39,7 +57,7 @@ func readRegionsFromCache() ([]types.Region, error) {
 	}
 
 	// Check if the cached regions have expired
-	if time.Since(cachedTime) > cacheExpiration {
+	if timestampProvider.Now().Sub(cachedTime) > cacheExpiration {
 		return nil, fmt.Errorf("cache has expired")
 	}
 

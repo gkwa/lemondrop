@@ -29,7 +29,7 @@ func GetEc2Client(region string) (*ec2.Client, error) {
 
 func GetAllAwsRegions() ([]types.Region, error) {
 	// Return cached regions if available
-	if cachedRegions, err := readRegionsFromCache(); err == nil {
+	if cachedRegions, err := readRegionsFromCache(DefaultTimestampProvider{}); err == nil {
 		return cachedRegions, nil
 	}
 
