@@ -3,12 +3,22 @@ package lemondrop
 import (
 	"context"
 	"fmt"
+	"sync"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ec2"
 	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 )
+
+type cacheEntry struct {
+	Regions []types.Region
+	Expiry  time.Time
+}
+
+var cache map[string]cacheEntry
+var cacheMutex sync.Mutex
 
 func CreateConfig(region string) (aws.Config, error) {
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion(region))
@@ -27,12 +37,27 @@ func GetEc2Client(region string) (*ec2.Client, error) {
 	return ec2.NewFromConfig(config), nil
 }
 
+func init() {
+	cache = make(map[string]cacheEntry)
+}
+
 func GetAllAwsRegions() ([]types.Region, error) {
 	region := "us-west-2" // fixme: arbitrary and add more for failover
 
+	// Check if the regions are already cached
+	cacheMutex.Lock()
+	entry, found := cache[region]
+	cacheMutex.Unlock()
+
+	if found && time.Now().Before(entry.Expiry) {
+		// Return the cached regions
+		return entry.Regions, nil
+	}
+
+	// Regions not found in cache, fetch them from the API
 	client, err := GetEc2Client(region)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	// Get a list of all AWS regions
@@ -42,6 +67,14 @@ func GetAllAwsRegions() ([]types.Region, error) {
 	}
 
 	regions := resp.Regions
+
+	// Cache the regions
+	cacheMutex.Lock()
+	cache[region] = cacheEntry{
+		Regions: regions,
+		Expiry:  time.Now().Add(time.Hour), // Cache expiry time
+	}
+	cacheMutex.Unlock()
 
 	return regions, nil
 }
