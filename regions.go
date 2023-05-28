@@ -28,11 +28,6 @@ func GetEc2Client(region string) (*ec2.Client, error) {
 }
 
 func GetAllAwsRegions() ([]types.Region, error) {
-	// Return cached regions if available
-	if cachedRegions, err := readRegionsFromCache(DefaultTimestampProvider{}); err == nil {
-		return cachedRegions, nil
-	}
-
 	region := "us-west-2" // fixme: arbitrary and add more for failover
 
 	client, err := GetEc2Client(region)
@@ -47,11 +42,6 @@ func GetAllAwsRegions() ([]types.Region, error) {
 	}
 
 	regions := resp.Regions
-
-	// Cache the regions to disk
-	if err := writeRegionsToCache(regions); err != nil {
-		fmt.Printf("Warning: Failed to write regions cache to disk: %v\n", err)
-	}
 
 	return regions, nil
 }
