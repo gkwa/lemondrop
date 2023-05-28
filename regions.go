@@ -72,7 +72,7 @@ func GetAllAwsRegions() ([]types.Region, error) {
 	cacheMutex.Lock()
 	cache[region] = cacheEntry{
 		Regions: regions,
-		Expiry:  time.Now().Add(time.Hour), // Cache expiry time
+		Expiry:  time.Now().Add(1 * 24 * time.Hour), // Cache expiry time
 	}
 	cacheMutex.Unlock()
 
