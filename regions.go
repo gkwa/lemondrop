@@ -33,7 +33,6 @@ func GetEc2Client(region string) (*ec2.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	// Create an EC2 client
 	return ec2.NewFromConfig(config), nil
 }
 
@@ -44,23 +43,19 @@ func init() {
 func GetAllAwsRegions() ([]types.Region, error) {
 	region := "us-west-2" // fixme: arbitrary and add more for failover
 
-	// Check if the regions are already cached
 	cacheMutex.Lock()
 	entry, found := cache[region]
 	cacheMutex.Unlock()
 
 	if found && time.Now().Before(entry.Expiry) {
-		// Return the cached regions
 		return entry.Regions, nil
 	}
 
-	// Regions not found in cache, fetch them from the API
 	client, err := GetEc2Client(region)
 	if err != nil {
 		return nil, err
 	}
 
-	// Get a list of all AWS regions
 	resp, err := client.DescribeRegions(context.Background(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to describe AWS regions: %v", err)
@@ -68,7 +63,6 @@ func GetAllAwsRegions() ([]types.Region, error) {
 
 	regions := resp.Regions
 
-	// Cache the regions
 	cacheMutex.Lock()
 	cache[region] = cacheEntry{
 		Regions: regions,
