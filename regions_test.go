@@ -1,7 +1,6 @@
 package lemondrop
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -20,13 +19,16 @@ func TestGetCity(t *testing.T) {
 	}
 }
 
-func TestGetAllAwsRegions(t *testing.T) {
-	regionsMap, err := GetAllAwsRegions()
+func TestGetRegionDetails(t *testing.T) {
+	regions, err := GetRegionDetails()
 	if err != nil {
 		panic(err)
 	}
-	for region := range regionsMap {
-		x := regionsMap[region]
-		fmt.Printf("%s: region: %s, city: %s\n", x.RegionCode, x.RegionFriendly, x.City)
+	regionDetails := regions["us-west-2"]
+	wantCity := "Oregon"
+	gotCity := regionDetails.City
+
+	if gotCity != wantCity {
+		t.Errorf("got %q want %q", gotCity, wantCity)
 	}
 }

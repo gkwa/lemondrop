@@ -3,10 +3,11 @@ module github.com/taylormonacelli/lemondrop
 go 1.20
 
 require (
+	github.com/adrg/xdg v0.4.0
 	github.com/aws/aws-sdk-go-v2 v1.21.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.25
-	github.com/aws/aws-sdk-go-v2/service/ec2 v1.98.0
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.5
+	github.com/patrickmn/go-cache v2.1.0+incompatible
 )
 
 require (
@@ -21,4 +22,5 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.19.0 // indirect
 	github.com/aws/smithy-go v1.14.2 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	golang.org/x/sys v0.0.0-20211025201205-69cdffdb9359 // indirect
 )

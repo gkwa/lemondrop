@@ -2,24 +2,23 @@ package lemondrop
 
 import (
 	"context"
-	"fmt"
 	"regexp"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/service/ec2"
-	"github.com/aws/aws-sdk-go-v2/service/ec2/types"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 )
 
-type DetailedRegion struct {
+type RegionComponents struct {
 	Region         string
 	RegionDesc     string
 	RegionCode     string
 	RegionFriendly string
 	City           string
 }
+
+type RegionDetails map[string]RegionComponents
 
 func getCity(str string) (string, string, error) {
 	pattern := `([^(]+) (\(([^)]+)\))?`
@@ -36,19 +35,19 @@ func getCity(str string) (string, string, error) {
 	return "", "", nil
 }
 
-func GetAllAwsRegions() (map[string]DetailedRegion, error) {
+func GetAllAwsRegions() (RegionDetails, error) {
 	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-west-2"))
 	if err != nil {
 		return nil, err
 	}
 
-	// Create an SSM client
 	svc := ssm.NewFromConfig(cfg)
 
-	regionDetails := make(map[string]DetailedRegion)
+	// copied from https://stackoverflow.com/a/72357524/1495086
+
+	regionDetails := make(RegionDetails)
 	var nextToken *string
 	for {
-		// Request all regions, paginating the results if needed
 		input := &ssm.GetParametersByPathInput{
 			Path:      aws.String("/aws/service/global-infrastructure/regions"),
 			NextToken: nextToken,
@@ -75,7 +74,7 @@ func GetAllAwsRegions() (map[string]DetailedRegion, error) {
 			if err != nil {
 				panic(err)
 			}
-			regionDetails[region] = DetailedRegion{
+			regionDetails[region] = RegionComponents{
 				City:           city,
 				Region:         region,
 				RegionCode:     region,
@@ -91,22 +90,4 @@ func GetAllAwsRegions() (map[string]DetailedRegion, error) {
 		}
 	}
 	return regionDetails, nil
-}
-
-func GetAllAwsRegions1() ([]types.Region, error) {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
-	if err != nil {
-		return nil, err
-	}
-	client := ec2.NewFromConfig(cfg)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := client.DescribeRegions(context.Background(), nil)
-	if err != nil {
-		return nil, fmt.Errorf("failed to describe AWS regions: %v", err)
-	}
-
-	return resp.Regions, nil
 }
