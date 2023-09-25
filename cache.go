@@ -57,6 +57,8 @@ func GetRegionDetails() (RegionDetails, error) {
 		return regions, nil
 	}
 
+	slog.Info("cache miss")
+
 	regions, err = GetAllAwsRegions()
 	if err != nil {
 		return RegionDetails{}, err
