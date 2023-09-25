@@ -53,11 +53,11 @@ func GetRegionDetails() (RegionDetails, error) {
 	}
 
 	if len(regions) != 0 {
-		slog.Info("cache hit")
+		slog.Debug("cache hit")
 		return regions, nil
 	}
 
-	slog.Info("cache miss")
+	slog.Debug("cache miss")
 
 	regions, err = GetAllAwsRegions()
 	if err != nil {
