@@ -2,14 +2,16 @@ package lemondrop
 
 import (
 	"encoding/json"
-	"fmt"
 	"time"
 
 	"github.com/patrickmn/go-cache"
+	"golang.org/x/exp/slog"
 )
 
-var regionsCache *cache.Cache
-var cacheKey string
+var (
+	regionsCache *cache.Cache
+	cacheKey     string
+)
 
 func init() {
 	regionsCache = cache.New(24*time.Hour, 24*time.Hour)
@@ -51,6 +53,7 @@ func GetRegionDetails() (RegionDetails, error) {
 	}
 
 	if len(regions) != 0 {
+		slog.Info("cache hit")
 		return regions, nil
 	}
 
@@ -63,7 +66,6 @@ func GetRegionDetails() (RegionDetails, error) {
 	if err != nil {
 		return RegionDetails{}, err
 	}
-	fmt.Println(string(jsonBytes))
 	regionsCache.Set(cacheKey, string(jsonBytes), cache.DefaultExpiration)
 	regionsCache.SaveFile(cachePath)
 
