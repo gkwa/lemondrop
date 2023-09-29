@@ -14,7 +14,7 @@ func getCachePath() (string, error) {
 		return "", err
 	}
 
-	dirPerm := os.FileMode(0700)
+	dirPerm := os.FileMode(0o700)
 
 	d := filepath.Dir(configFilePath)
 

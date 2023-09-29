@@ -2,12 +2,15 @@ package lemondrop
 
 import (
 	"context"
+	"encoding/json"
+	"log/slog"
 	"regexp"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
+	"github.com/patrickmn/go-cache"
 )
 
 type RegionComponents struct {
@@ -90,4 +93,39 @@ func GetAllAwsRegions() (RegionDetails, error) {
 		}
 	}
 	return regionDetails, nil
+}
+
+func GetRegionDetails() (RegionDetails, error) {
+	cachePath, err := getCachePath()
+	if err != nil {
+		return RegionDetails{}, err
+	}
+
+	regions, err := fetchFromCache()
+	if err != nil {
+		return RegionDetails{}, err
+	}
+
+	cacheHitDebugMsg := "regions in cache"
+
+	if len(regions) != 0 {
+		slog.Debug(cacheHitDebugMsg, "hit", true)
+		return regions, nil
+	}
+
+	slog.Debug(cacheHitDebugMsg, "hit", false)
+
+	regions, err = GetAllAwsRegions()
+	if err != nil {
+		return RegionDetails{}, err
+	}
+
+	jsonBytes, err := json.MarshalIndent(regions, "", "  ")
+	if err != nil {
+		return RegionDetails{}, err
+	}
+	regionsCache.Set(cacheKey, string(jsonBytes), cache.DefaultExpiration)
+	regionsCache.SaveFile(cachePath)
+
+	return regions, nil
 }

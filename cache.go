@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/patrickmn/go-cache"
-	"golang.org/x/exp/slog"
 )
 
 var (
@@ -38,38 +37,5 @@ func fetchFromCache() (RegionDetails, error) {
 	if err != nil {
 		return RegionDetails{}, err
 	}
-	return regions, nil
-}
-
-func GetRegionDetails() (RegionDetails, error) {
-	cachePath, err := getCachePath()
-	if err != nil {
-		return RegionDetails{}, err
-	}
-
-	regions, err := fetchFromCache()
-	if err != nil {
-		return RegionDetails{}, err
-	}
-
-	if len(regions) != 0 {
-		slog.Debug("cache hit")
-		return regions, nil
-	}
-
-	slog.Debug("cache miss")
-
-	regions, err = GetAllAwsRegions()
-	if err != nil {
-		return RegionDetails{}, err
-	}
-
-	jsonBytes, err := json.MarshalIndent(regions, "", "  ")
-	if err != nil {
-		return RegionDetails{}, err
-	}
-	regionsCache.Set(cacheKey, string(jsonBytes), cache.DefaultExpiration)
-	regionsCache.SaveFile(cachePath)
-
 	return regions, nil
 }
