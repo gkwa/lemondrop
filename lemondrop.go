@@ -138,14 +138,11 @@ func GetRegions(writer io.Writer, showDesc bool) {
 		panic(err)
 	}
 
-	if showDesc {
-		for _, rDetail := range regions {
-			fmt.Fprintf(writer, "%s [%s]\n", rDetail.RegionCode, rDetail.RegionDesc)
-		}
-		return
-	}
-
 	for _, rDetail := range regions {
-		fmt.Fprintf(writer, "%s\n", rDetail.Region)
+		if showDesc {
+			fmt.Fprintf(writer, "%s [%s]\n", rDetail.RegionCode, rDetail.RegionDesc)
+		} else {
+			fmt.Fprintf(writer, "%s\n", rDetail.RegionCode)
+		}
 	}
 }
