@@ -14,5 +14,5 @@ func main() {
 	flag.BoolVar(&verbose, "v", false, "Enable verbose output (shorthand)")
 	flag.Parse()
 
-	lemondrop.GetRegions(os.Stdout, verbose)
+	lemondrop.WriteRegions(os.Stdout, verbose)
 }

@@ -132,7 +132,7 @@ func GetRegionDetails() (RegionDetails, error) {
 	return regions, nil
 }
 
-func GetRegions(writer io.Writer, showDesc bool) {
+func WriteRegions(writer io.Writer, showDesc bool) {
 	regions, err := GetRegionDetails()
 	if err != nil {
 		panic(err)
