@@ -132,10 +132,17 @@ func GetRegionDetails() (RegionDetails, error) {
 	return regions, nil
 }
 
-func GetRegions(writer io.Writer) {
+func GetRegions(writer io.Writer, showDesc bool) {
 	regions, err := GetRegionDetails()
 	if err != nil {
 		panic(err)
+	}
+
+	if showDesc {
+		for _, rDetail := range regions {
+			fmt.Fprintf(writer, "%s [%s]\n", rDetail.RegionCode, rDetail.RegionDesc)
+		}
+		return
 	}
 
 	for _, rDetail := range regions {

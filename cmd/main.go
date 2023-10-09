@@ -1,11 +1,18 @@
 package main
 
 import (
+	"flag"
 	"os"
 
 	"github.com/taylormonacelli/lemondrop"
 )
 
+var verbose bool
+
 func main() {
-	lemondrop.GetRegions(os.Stdout)
+	flag.BoolVar(&verbose, "verbose", false, "Enable verbose output")
+	flag.BoolVar(&verbose, "v", false, "Enable verbose output (shorthand)")
+	flag.Parse()
+
+	lemondrop.GetRegions(os.Stdout, verbose)
 }

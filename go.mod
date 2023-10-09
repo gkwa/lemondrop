@@ -8,7 +8,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.18.25
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.5
 	github.com/patrickmn/go-cache v2.1.0+incompatible
-	golang.org/x/exp v0.0.0-20230905200255-921286631fa9
 )
 
 require (
