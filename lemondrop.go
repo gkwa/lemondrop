@@ -3,6 +3,8 @@ package lemondrop
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"io"
 	"log/slog"
 	"regexp"
 	"strings"
@@ -128,4 +130,15 @@ func GetRegionDetails() (RegionDetails, error) {
 	regionsCache.SaveFile(cachePath)
 
 	return regions, nil
+}
+
+func GetRegions(writer io.Writer) {
+	regions, err := GetRegionDetails()
+	if err != nil {
+		panic(err)
+	}
+
+	for _, rDetail := range regions {
+		fmt.Fprintf(writer, "%s\n", rDetail.Region)
+	}
 }
