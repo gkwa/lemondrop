@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.38.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/taylormonacelli/forestfish v0.0.2
-	github.com/taylormonacelli/goldbug v0.0.2
+	github.com/taylormonacelli/goldbug v0.0.4
 	github.com/taylormonacelli/somespider v0.0.0-20231012013812-aa3606dd52d2
 )
 

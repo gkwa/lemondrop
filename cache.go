@@ -1,24 +1,31 @@
 package lemondrop
 
 import (
-	"encoding/json"
+	"encoding/gob"
+	"log/slog"
+	"os"
 	"path/filepath"
 	"time"
 
-	"github.com/patrickmn/go-cache"
+	gocache "github.com/patrickmn/go-cache"
+	mymazda "github.com/taylormonacelli/forestfish/mymazda"
 	"github.com/taylormonacelli/somespider"
 )
 
 var (
-	regionsCache *cache.Cache
-	cacheKey     string
-	relCachPath  string
+	regionsCache    *gocache.Cache
+	cacheKey        string
+	relCachPath     string
+	expiration      time.Duration
+	cleanupInterval time.Duration
 )
 
 func init() {
-	regionsCache = cache.New(24*time.Hour, 24*time.Hour)
-	cacheKey = "aws/regions"
-	relCachPath = filepath.Join("lmondrop", "regions.db")
+	cacheKey = "aws-regions"
+	cleanupInterval = 24 * time.Hour
+	expiration = 12 * time.Hour
+	regionsCache = gocache.New(expiration, cleanupInterval)
+	relCachPath = filepath.Join("lemondrop", "regions.db")
 }
 
 func fetchCachedRegions() (RegionDetails, error) {
@@ -27,19 +34,33 @@ func fetchCachedRegions() (RegionDetails, error) {
 		return RegionDetails{}, err
 	}
 
-	regionsCache.LoadFile(cachePath)
-
-	regions := make(RegionDetails)
-
-	regionInterface, found := regionsCache.Get(cacheKey)
-	if !found {
+	if !mymazda.FileExists(cachePath) {
 		return RegionDetails{}, nil
 	}
 
-	jsonData := regionInterface.(string)
-	err = json.Unmarshal([]byte(jsonData), &regions)
+	// unmarshal cache from file:
+	file, err := os.Open(cachePath)
 	if err != nil {
+		slog.Debug("file access", "error", err.Error())
 		return RegionDetails{}, err
 	}
-	return regions, nil
+	defer file.Close()
+
+	gobDecoder := gob.NewDecoder(file)
+	gob.Register(RegionDetails{})
+
+	var cacheMap map[string]gocache.Item
+	if err := gobDecoder.Decode(&cacheMap); err != nil {
+		slog.Debug("decode", "error", err.Error())
+		return RegionDetails{}, err
+	}
+
+	cache2 := gocache.NewFrom(expiration, cleanupInterval, cacheMap)
+	reply, future, found := cache2.GetWithExpiration(cacheKey)
+
+	expires := time.Until(future).Truncate(time.Second)
+	e := reply.(RegionDetails)
+	slog.Debug("newCache", "found", found, "expires", expires, "now", time.Now(), "future", future, "result", e)
+
+	return e, nil
 }

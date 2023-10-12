@@ -3,7 +3,6 @@ package lemondrop
 import (
 	"context"
 	"encoding/gob"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
@@ -107,6 +106,8 @@ func GetRegionDetails() (RegionDetails, error) {
 		return RegionDetails{}, err
 	}
 
+	slog.Debug("regions fetch", "count", len(regions))
+
 	if len(regions) != 0 {
 		slog.Debug("regions in cache", "hit", true)
 		return regions, nil
@@ -120,11 +121,7 @@ func GetRegionDetails() (RegionDetails, error) {
 		return RegionDetails{}, err
 	}
 
-	jsonBytes, err := json.MarshalIndent(regions, "", "  ")
-	if err != nil {
-		return RegionDetails{}, err
-	}
-	regionsCache.Set(cacheKey, string(jsonBytes), cache.DefaultExpiration)
+	regionsCache.Set(cacheKey, regions, cache.DefaultExpiration)
 	defer peristCacheToDisk()
 
 	return regions, nil
@@ -157,6 +154,7 @@ func peristCacheToDisk() error {
 func WriteRegions(writer io.Writer, showDesc bool) {
 	regions, err := GetRegionDetails()
 	if err != nil {
+		slog.Error("GetRegionDetails", "error", err.Error())
 		panic(err)
 	}
 
