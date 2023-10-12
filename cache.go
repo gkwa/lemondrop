@@ -21,7 +21,7 @@ func init() {
 	relCachPath = filepath.Join("lmondrop", "regions.db")
 }
 
-func fetchFromCache() (RegionDetails, error) {
+func fetchCachedRegions() (RegionDetails, error) {
 	cachePath, err := somespider.GenPath(relCachPath)
 	if err != nil {
 		return RegionDetails{}, err

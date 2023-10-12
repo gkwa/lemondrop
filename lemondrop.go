@@ -2,10 +2,12 @@ package lemondrop
 
 import (
 	"context"
+	"encoding/gob"
 	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
+	"os"
 	"regexp"
 	"strings"
 
@@ -13,6 +15,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/patrickmn/go-cache"
+	mymazda "github.com/taylormonacelli/forestfish/mymazda"
 	"github.com/taylormonacelli/somespider"
 )
 
@@ -99,12 +102,7 @@ func GetAllAwsRegions() (RegionDetails, error) {
 }
 
 func GetRegionDetails() (RegionDetails, error) {
-	cachePath, err := somespider.GenPath(relCachPath)
-	if err != nil {
-		return RegionDetails{}, err
-	}
-
-	regions, err := fetchFromCache()
+	regions, err := fetchCachedRegions()
 	if err != nil {
 		return RegionDetails{}, err
 	}
@@ -127,9 +125,33 @@ func GetRegionDetails() (RegionDetails, error) {
 		return RegionDetails{}, err
 	}
 	regionsCache.Set(cacheKey, string(jsonBytes), cache.DefaultExpiration)
-	regionsCache.SaveFile(cachePath)
+	defer peristCacheToDisk()
 
 	return regions, nil
+}
+
+func peristCacheToDisk() error {
+	cachePath, err := somespider.GenPath(relCachPath)
+	if err != nil {
+		return err
+	}
+
+	// prepare to persist cache to disk:
+	cacheSnapshot := regionsCache.Items()
+
+	gob.Register(RegionDetails{})
+
+	// serialize using gob:
+	file, _ := os.Create(cachePath)
+	encoder := gob.NewEncoder(file)
+	err = encoder.Encode(cacheSnapshot)
+	if err != nil {
+		slog.Error("encode", "error", err.Error())
+		return err
+	}
+	defer file.Close()
+	slog.Debug("checking existance of file cache", "exists", mymazda.FileExists(cachePath))
+	return nil
 }
 
 func WriteRegions(writer io.Writer, showDesc bool) {
