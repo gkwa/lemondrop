@@ -58,6 +58,11 @@ func fetchRegionsFromCache() (RegionDetails, error) {
 	cache2 := gocache.NewFrom(expiration, cleanupInterval, cacheMap)
 	reply, future, found := cache2.GetWithExpiration(cacheKey)
 
+	if reply == nil {
+		// cache expired
+		return RegionDetails{}, nil
+	}
+
 	expires := time.Until(future).Truncate(time.Second)
 	e := reply.(RegionDetails)
 	slog.Debug("newCache", "found", found, "expires", expires, "now", time.Now(), "future", future, "result", e)

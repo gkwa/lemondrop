@@ -65,7 +65,10 @@ func fetchRegionsFromNetwork() (RegionDetails, error) {
 			NextToken: nextToken,
 		}
 
-		resp, err := svc.GetParametersByPath(context.TODO(), input)
+		ctx, cancel = context.WithTimeout(context.Background(), 3*time.Second)
+		defer cancel()
+
+		resp, err := svc.GetParametersByPath(ctx, input)
 		if err != nil {
 			return nil, err
 		}
@@ -74,7 +77,12 @@ func fetchRegionsFromNetwork() (RegionDetails, error) {
 		for _, parameter := range resp.Parameters {
 			region := (*parameter.Name)[strings.LastIndex(*parameter.Name, "/")+1:]
 
-			regionInfo, err := svc.GetParameter(context.TODO(), &ssm.GetParameterInput{
+			slog.Debug("fetch", "region", region)
+
+			ctx, cancel = context.WithTimeout(context.Background(), 3*time.Second)
+			defer cancel()
+
+			regionInfo, err := svc.GetParameter(ctx, &ssm.GetParameterInput{
 				Name: aws.String("/aws/service/global-infrastructure/regions/" + region + "/longName"),
 			})
 			if err != nil {
