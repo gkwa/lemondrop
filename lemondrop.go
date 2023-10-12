@@ -9,6 +9,7 @@ import (
 	"os"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -43,8 +44,11 @@ func getCity(str string) (string, string, error) {
 	return "", "", nil
 }
 
-func GetAllAwsRegions() (RegionDetails, error) {
-	cfg, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-west-2"))
+func fetchRegionsFromNetwork() (RegionDetails, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion("us-west-2"))
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +105,7 @@ func GetAllAwsRegions() (RegionDetails, error) {
 }
 
 func GetRegionDetails() (RegionDetails, error) {
-	regions, err := fetchCachedRegions()
+	regions, err := fetchRegionsFromCache()
 	if err != nil {
 		return RegionDetails{}, err
 	}
@@ -116,7 +120,7 @@ func GetRegionDetails() (RegionDetails, error) {
 	// cache miss
 	slog.Debug("regions in cache", "hit", false)
 
-	regions, err = GetAllAwsRegions()
+	regions, err = fetchRegionsFromNetwork()
 	if err != nil {
 		return RegionDetails{}, err
 	}
