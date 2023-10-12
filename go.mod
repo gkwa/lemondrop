@@ -1,16 +1,17 @@
 module github.com/taylormonacelli/lemondrop
 
-go 1.20
+go 1.21.1
 
 require (
-	github.com/adrg/xdg v0.4.0
 	github.com/aws/aws-sdk-go-v2 v1.21.0
 	github.com/aws/aws-sdk-go-v2/config v1.18.25
 	github.com/aws/aws-sdk-go-v2/service/ssm v1.37.5
 	github.com/patrickmn/go-cache v2.1.0+incompatible
+	github.com/taylormonacelli/somespider v0.0.0-20231012013812-aa3606dd52d2
 )
 
 require (
+	github.com/adrg/xdg v0.4.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.24 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.3 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.41 // indirect

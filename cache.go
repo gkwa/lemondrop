@@ -5,20 +5,23 @@ import (
 	"time"
 
 	"github.com/patrickmn/go-cache"
+	"github.com/taylormonacelli/somespider"
 )
 
 var (
 	regionsCache *cache.Cache
 	cacheKey     string
+	relCachPath  string
 )
 
 func init() {
 	regionsCache = cache.New(24*time.Hour, 24*time.Hour)
 	cacheKey = "aws/regions"
+	relCachPath = "lmondrop/regions.db"
 }
 
 func fetchFromCache() (RegionDetails, error) {
-	cachePath, err := getCachePath()
+	cachePath, err := somespider.GenPath(relCachPath)
 	if err != nil {
 		return RegionDetails{}, err
 	}

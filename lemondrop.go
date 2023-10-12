@@ -13,6 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/ssm"
 	"github.com/patrickmn/go-cache"
+	"github.com/taylormonacelli/somespider"
 )
 
 type RegionComponents struct {
@@ -98,7 +99,7 @@ func GetAllAwsRegions() (RegionDetails, error) {
 }
 
 func GetRegionDetails() (RegionDetails, error) {
-	cachePath, err := getCachePath()
+	cachePath, err := somespider.GenPath("lemondrop/regions.db")
 	if err != nil {
 		return RegionDetails{}, err
 	}
