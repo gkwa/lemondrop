@@ -99,7 +99,7 @@ func GetAllAwsRegions() (RegionDetails, error) {
 }
 
 func GetRegionDetails() (RegionDetails, error) {
-	cachePath, err := somespider.GenPath("lemondrop/regions.db")
+	cachePath, err := somespider.GenPath(relCachPath)
 	if err != nil {
 		return RegionDetails{}, err
 	}
@@ -109,14 +109,13 @@ func GetRegionDetails() (RegionDetails, error) {
 		return RegionDetails{}, err
 	}
 
-	cacheHitDebugMsg := "regions in cache"
-
 	if len(regions) != 0 {
-		slog.Debug(cacheHitDebugMsg, "hit", true)
+		slog.Debug("regions in cache", "hit", true)
 		return regions, nil
 	}
 
-	slog.Debug(cacheHitDebugMsg, "hit", false)
+	// cache miss
+	slog.Debug("regions in cache", "hit", false)
 
 	regions, err = GetAllAwsRegions()
 	if err != nil {

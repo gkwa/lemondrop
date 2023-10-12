@@ -2,6 +2,7 @@ package lemondrop
 
 import (
 	"encoding/json"
+	"path/filepath"
 	"time"
 
 	"github.com/patrickmn/go-cache"
@@ -17,7 +18,7 @@ var (
 func init() {
 	regionsCache = cache.New(24*time.Hour, 24*time.Hour)
 	cacheKey = "aws/regions"
-	relCachPath = "lmondrop/regions.db"
+	relCachPath = filepath.Join("lmondrop", "regions.db")
 }
 
 func fetchFromCache() (RegionDetails, error) {
