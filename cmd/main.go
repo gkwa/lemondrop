@@ -9,14 +9,19 @@ import (
 	"github.com/taylormonacelli/lemondrop"
 )
 
-var verbose bool
+var (
+	verbose     bool
+	veryVerbose bool
+)
 
 func main() {
 	flag.BoolVar(&verbose, "verbose", false, "Enable verbose output")
+	flag.BoolVar(&veryVerbose, "very-verbose", false, "Show debug")
 	flag.BoolVar(&verbose, "v", false, "Enable verbose output (shorthand)")
+	
 	flag.Parse()
 
-	if verbose {
+	if veryVerbose {
 		goldbug.SetDefaultLoggerText(slog.LevelDebug)
 	}
 
