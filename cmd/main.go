@@ -15,10 +15,11 @@ var (
 )
 
 func main() {
-	flag.BoolVar(&verbose, "verbose", false, "Enable verbose output")
+	flag.BoolVar(&verbose, "v", false, "Show user friendly region name (shorthand)")
+	flag.BoolVar(&verbose, "verbose", false, "Show user friendly region name")
+
 	flag.BoolVar(&veryVerbose, "very-verbose", false, "Show debug")
-	flag.BoolVar(&verbose, "v", false, "Enable verbose output (shorthand)")
-	
+
 	flag.Parse()
 
 	if veryVerbose {
