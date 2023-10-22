@@ -13,11 +13,11 @@ import (
 )
 
 var (
-	regionsCache    *gocache.Cache
-	cacheKey        string
-	relCachPath     string
-	expiration      time.Duration
-	cleanupInterval time.Duration
+	regionsCache      *gocache.Cache
+	cacheKey          string
+	cacheRelativePath string
+	expiration        time.Duration
+	cleanupInterval   time.Duration
 )
 
 func init() {
@@ -25,11 +25,11 @@ func init() {
 	cleanupInterval = 24 * time.Hour
 	expiration = 12 * time.Hour
 	regionsCache = gocache.New(expiration, cleanupInterval)
-	relCachPath = filepath.Join("lemondrop", "regions.db")
+	cacheRelativePath = filepath.Join("lemondrop", "aws-regions.gob")
 }
 
 func fetchRegionsFromCache() (RegionDetails, error) {
-	cachePath, err := somespider.GenPath(relCachPath)
+	cachePath, err := somespider.GenPath(cacheRelativePath)
 	if err != nil {
 		return RegionDetails{}, err
 	}

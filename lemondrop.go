@@ -140,7 +140,7 @@ func GetRegionDetails() (RegionDetails, error) {
 }
 
 func peristCacheToDisk() error {
-	cachePath, err := somespider.GenPath(relCachPath)
+	cachePath, err := somespider.GenPath(cacheRelativePath)
 	if err != nil {
 		return err
 	}
@@ -159,6 +159,7 @@ func peristCacheToDisk() error {
 		return err
 	}
 	defer file.Close()
+
 	slog.Debug("checking existance of file cache", "exists", mymazda.FileExists(cachePath))
 	return nil
 }
