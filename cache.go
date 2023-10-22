@@ -41,7 +41,7 @@ func fetchRegionsFromCache() (RegionDetails, error) {
 	// unmarshal cache from file:
 	file, err := os.Open(cachePath)
 	if err != nil {
-		slog.Debug("file access", "error", err.Error())
+		slog.Debug("file access", "error", err)
 		return RegionDetails{}, err
 	}
 	defer file.Close()
@@ -51,7 +51,7 @@ func fetchRegionsFromCache() (RegionDetails, error) {
 
 	var cacheMap map[string]gocache.Item
 	if err := gobDecoder.Decode(&cacheMap); err != nil {
-		slog.Debug("decode", "error", err.Error())
+		slog.Debug("decode", "error", err)
 		return RegionDetails{}, err
 	}
 

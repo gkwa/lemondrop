@@ -155,7 +155,7 @@ func peristCacheToDisk() error {
 	encoder := gob.NewEncoder(file)
 	err = encoder.Encode(cacheSnapshot)
 	if err != nil {
-		slog.Error("encode", "error", err.Error())
+		slog.Error("encode", "error", err)
 		return err
 	}
 	defer file.Close()
@@ -167,7 +167,7 @@ func peristCacheToDisk() error {
 func WriteRegions(writer io.Writer, showDesc bool) {
 	regions, err := GetRegionDetails()
 	if err != nil {
-		slog.Error("GetRegionDetails", "error", err.Error())
+		slog.Error("GetRegionDetails", "error", err)
 		panic(err)
 	}
 
