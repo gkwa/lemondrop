@@ -126,7 +126,7 @@ func GetRegionDetails() (RegionDetails, error) {
 	}
 
 	// cache miss
-	slog.Debug("regions in cache", "hit", false)
+	slog.Info("regions in cache", "hit", false)
 
 	regions, err = fetchRegionsFromNetwork()
 	if err != nil {
