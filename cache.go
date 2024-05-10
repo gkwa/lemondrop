@@ -23,7 +23,7 @@ var (
 func init() {
 	cacheKey = "aws-regions"
 	cleanupInterval = 24 * time.Hour
-	expiration = 12 * time.Hour
+	expiration = 7 * 24 * time.Hour
 	regionsCache = gocache.New(expiration, cleanupInterval)
 	cacheRelativePath = filepath.Join("lemondrop", "aws-regions.gob")
 }
