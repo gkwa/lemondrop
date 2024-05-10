@@ -164,11 +164,11 @@ func peristCacheToDisk() error {
 	return nil
 }
 
-func WriteRegions(writer io.Writer, showDesc bool) {
+func WriteRegions(writer io.Writer, showDesc bool) error {
 	regions, err := GetRegionDetails()
 	if err != nil {
 		slog.Error("GetRegionDetails", "error", err)
-		panic(err)
+		return err
 	}
 
 	for _, rDetail := range regions {
@@ -178,4 +178,6 @@ func WriteRegions(writer io.Writer, showDesc bool) {
 			fmt.Fprintf(writer, "%s\n", rDetail.RegionCode)
 		}
 	}
+
+	return nil
 }
