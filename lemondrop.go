@@ -45,7 +45,7 @@ func getCity(str string) (string, string, error) {
 }
 
 func fetchRegionsFromNetwork() (RegionDetails, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
 	cfg, err := config.LoadDefaultConfig(ctx, config.WithRegion("us-west-2"))
@@ -65,7 +65,7 @@ func fetchRegionsFromNetwork() (RegionDetails, error) {
 			NextToken: nextToken,
 		}
 
-		ctx, cancel = context.WithTimeout(context.Background(), 3*time.Second)
+		ctx, cancel = context.WithTimeout(context.Background(), 15*time.Second)
 		defer cancel()
 
 		resp, err := svc.GetParametersByPath(ctx, input)
@@ -79,7 +79,7 @@ func fetchRegionsFromNetwork() (RegionDetails, error) {
 
 			slog.Debug("fetch", "region", region)
 
-			ctx, cancel = context.WithTimeout(context.Background(), 3*time.Second)
+			ctx, cancel = context.WithTimeout(context.Background(), 15*time.Second)
 			defer cancel()
 
 			regionInfo, err := svc.GetParameter(ctx, &ssm.GetParameterInput{
