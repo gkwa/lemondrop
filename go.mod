@@ -9,11 +9,11 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/taylormonacelli/forestfish v0.0.10
 	github.com/taylormonacelli/goldbug v0.0.6
-	github.com/taylormonacelli/somespider v0.0.0-20240127160314-1cf65a8b592b
+	github.com/taylormonacelli/somespider v0.0.0-20241023183358-4b44d57a63a8
 )
 
 require (
-	github.com/adrg/xdg v0.4.0 // indirect
+	github.com/adrg/xdg v0.5.0 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.41 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.16.17 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.21 // indirect
@@ -26,5 +26,5 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/sts v1.32.2 // indirect
 	github.com/aws/smithy-go v1.22.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/sys v0.22.0 // indirect
 )
