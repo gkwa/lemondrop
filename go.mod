@@ -7,7 +7,7 @@ toolchain go1.26.5
 require (
 	github.com/aws/aws-sdk-go-v2 v1.42.1
 	github.com/aws/aws-sdk-go-v2/config v1.32.30
-	github.com/aws/aws-sdk-go-v2/service/ssm v1.71.1
+	github.com/aws/aws-sdk-go-v2/service/ssm v1.72.0
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/taylormonacelli/forestfish v0.0.10
 	github.com/taylormonacelli/goldbug v0.0.6
